@@ -1,6 +1,6 @@
 {
-  "name": "wxt-svelte-starter",
-  "description": "manifest.json description",
+  "name": "war-era-stats-ext",
+  "description": "Official extension of the warerastats.io website",
   "private": true,
   "version": "0.0.0",
   "type": "module",

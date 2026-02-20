@@ -4,4 +4,14 @@ import { defineConfig } from "wxt";
 export default defineConfig({
   srcDir: "src",
   modules: ["@wxt-dev/module-svelte"],
+
+  manifest: {
+    host_permissions: [
+      "https://api.warerastats.io/*",
+    ]
+  },
+
+  webExt: {
+    disabled: true
+  }
 });
