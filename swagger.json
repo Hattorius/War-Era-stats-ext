@@ -1,0 +1,905 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "War Era stats API",
+    "contact": {},
+    "version": "1.0"
+  },
+  "host": "api.warerastats.io",
+  "paths": {
+    "/cases": {
+      "get": {
+        "description": "Returns aggregated case opening results grouped by case type, showing item drop counts and associated skill distributions",
+        "produces": ["application/json"],
+        "tags": ["Cases"],
+        "summary": "Get case opening results",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/api.CaseData"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.ErrorData"
+            }
+          }
+        }
+      }
+    },
+    "/countries": {
+      "get": {
+        "description": "Returns a list of all countries with their tax rates, production bonuses, specialized items, region deposits and ruling party industrialism level",
+        "produces": ["application/json"],
+        "tags": ["Countries"],
+        "summary": "Get all countries",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/api.CountryData"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.ErrorData"
+            }
+          }
+        }
+      }
+    },
+    "/country-tax-paid/{countryId}": {
+      "get": {
+        "description": "Returns aggregated tax and wage data for a country within a given time range, grouped by region and item code. Optionally filter by a specific item code.",
+        "produces": ["application/json"],
+        "tags": ["Countries"],
+        "summary": "Get country tax paid data",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Country ID",
+            "name": "countryId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "Start timestamp (unix seconds)",
+            "name": "from",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "End timestamp (unix seconds)",
+            "name": "to",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Optional item code filter",
+            "name": "item",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.CountryTaxPaidData"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.ErrorData"
+            }
+          }
+        }
+      }
+    },
+    "/country-trades/{code}": {
+      "get": {
+        "description": "Returns up to 10000 recent trades involving a specific country, indicating whether the country was the buyer or seller",
+        "produces": ["application/json"],
+        "tags": ["Countries"],
+        "summary": "Get country trades",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Country code",
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/api.CountryTradeData"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.ErrorData"
+            }
+          }
+        }
+      }
+    },
+    "/dismantles": {
+      "get": {
+        "description": "Returns aggregated dismantle results showing scrap rewards per item code and equipment state",
+        "produces": ["application/json"],
+        "tags": ["Dismantles"],
+        "summary": "Get dismantle results",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/api.DismantlesData"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.ErrorData"
+            }
+          }
+        }
+      }
+    },
+    "/equipment/{code}": {
+      "get": {
+        "description": "Returns detailed data for a specific equipment type including skill variants with price statistics and recent transactions",
+        "produces": ["application/json"],
+        "tags": ["Equipment"],
+        "summary": "Get equipment details",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Equipment item code",
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.EquipmentData"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.ErrorData"
+            }
+          }
+        }
+      }
+    },
+    "/equipments": {
+      "get": {
+        "description": "Returns an overview of all equipment types with total transaction counts, average price, minimum price and maximum price",
+        "produces": ["application/json"],
+        "tags": ["Equipment"],
+        "summary": "Get all equipment types",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/api.EquipmentsData"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.ErrorData"
+            }
+          }
+        }
+      }
+    },
+    "/home": {
+      "get": {
+        "description": "Returns an overview of wage statistics, trade volume, inflation data and the 8 most recent trades",
+        "produces": ["application/json"],
+        "tags": ["Home"],
+        "summary": "Get home page data",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.HomeData"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.ErrorData"
+            }
+          }
+        }
+      }
+    },
+    "/item/{code}": {
+      "get": {
+        "description": "Returns detailed data for a specific item including price, candle stick chart data, effective prices at various depths, the current order book and recent transactions",
+        "produces": ["application/json"],
+        "tags": ["Items"],
+        "summary": "Get item details",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Item code (e.g. steel, bread, oil)",
+            "name": "code",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.ItemData"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.ErrorData"
+            }
+          }
+        }
+      }
+    },
+    "/items": {
+      "get": {
+        "description": "Returns a list of all tradeable items with their weighted average price, 24 hour volume, 24 hour price change and chart data points",
+        "produces": ["application/json"],
+        "tags": ["Items"],
+        "summary": "Get all items",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/api.ItemsItemData"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.ErrorData"
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "description": "Returns user data for the given user IDs. Accepts one or more id query parameters. Results are cached and unknown IDs are fetched from the War Era API.",
+        "produces": ["application/json"],
+        "tags": ["Users"],
+        "summary": "Look up users",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID (24 character hex string). Can be repeated for multiple lookups.",
+            "name": "id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/api.UserData"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.ErrorData"
+            }
+          }
+        }
+      }
+    },
+    "/wages": {
+      "get": {
+        "description": "Returns wage statistics for the last 14 days including average price, low, high, volume, candle stick chart data, the 10 highest paid wages and the 10 lowest paid wages",
+        "produces": ["application/json"],
+        "tags": ["Wages"],
+        "summary": "Get wage data",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/api.WageData"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/api.ErrorData"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "api.CaseData": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "itemCode": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "api.CountryData": {
+      "type": "object",
+      "properties": {
+        "countryId": {
+          "type": "string"
+        },
+        "incomeTaxPercentage": {
+          "type": "number"
+        },
+        "industrialism": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "productionBonusPercentage": {
+          "type": "number"
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.DepositData"
+          }
+        },
+        "selfworkTaxPercentage": {
+          "type": "number"
+        },
+        "specializedItemCode": {
+          "type": "string"
+        }
+      }
+    },
+    "api.CountryTaxPaidData": {
+      "type": "object",
+      "properties": {
+        "countryId": {
+          "type": "string"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.CountryTaxPaidEntry"
+          }
+        },
+        "from": {
+          "type": "integer"
+        },
+        "to": {
+          "type": "integer"
+        }
+      }
+    },
+    "api.CountryTaxPaidEntry": {
+      "type": "object",
+      "properties": {
+        "companies": {
+          "type": "integer"
+        },
+        "core": {
+          "type": "boolean"
+        },
+        "itemCode": {
+          "type": "string"
+        },
+        "ownerCountryId": {
+          "type": "string"
+        },
+        "regionId": {
+          "type": "string"
+        },
+        "taxRate": {
+          "type": "number"
+        },
+        "taxes": {
+          "type": "number"
+        },
+        "wages": {
+          "type": "number"
+        }
+      }
+    },
+    "api.CountryTradeData": {
+      "type": "object",
+      "properties": {
+        "created": {
+          "type": "integer"
+        },
+        "item": {
+          "type": "string"
+        },
+        "money": {
+          "type": "number"
+        },
+        "quantity": {
+          "type": "integer"
+        },
+        "side": {
+          "type": "string"
+        }
+      }
+    },
+    "api.DepositData": {
+      "type": "object",
+      "properties": {
+        "bonusPercentage": {
+          "type": "number"
+        },
+        "depositItemCode": {
+          "type": "string"
+        },
+        "endsAtUTC": {
+          "type": "integer"
+        },
+        "regionId": {
+          "type": "string"
+        },
+        "regionName": {
+          "type": "string"
+        }
+      }
+    },
+    "api.DismantlesData": {
+      "type": "object",
+      "properties": {
+        "itemCode": {
+          "type": "string"
+        },
+        "rewards": {
+          "description": "r[state] = [scrap, count]",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "api.EquipmentData": {
+      "type": "object",
+      "properties": {
+        "itemCode": {
+          "type": "string"
+        },
+        "recentTransactions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.EquipmentTransaction"
+          }
+        },
+        "variants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.EquipmentVariant"
+          }
+        }
+      }
+    },
+    "api.EquipmentTransaction": {
+      "type": "object",
+      "properties": {
+        "buyerId": {
+          "type": "string"
+        },
+        "itemCode": {
+          "type": "string"
+        },
+        "money": {
+          "type": "number"
+        },
+        "sellerId": {
+          "type": "string"
+        },
+        "skills": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "soldAt": {
+          "type": "integer"
+        },
+        "timeTillSale": {
+          "type": "integer"
+        }
+      }
+    },
+    "api.EquipmentVariant": {
+      "type": "object",
+      "properties": {
+        "avgPrice": {
+          "type": "number"
+        },
+        "fromTime": {
+          "type": "integer"
+        },
+        "maxPrice": {
+          "type": "number"
+        },
+        "minPrice": {
+          "type": "number"
+        },
+        "sampleCount": {
+          "type": "integer"
+        },
+        "skillCount": {
+          "type": "integer"
+        },
+        "skills": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "toTime": {
+          "type": "integer"
+        },
+        "updatedAt": {
+          "type": "integer"
+        }
+      }
+    },
+    "api.EquipmentsData": {
+      "type": "object",
+      "properties": {
+        "avgPrice": {
+          "type": "number"
+        },
+        "itemCode": {
+          "type": "string"
+        },
+        "maxPrice": {
+          "type": "number"
+        },
+        "minPrice": {
+          "type": "number"
+        },
+        "totalTransactionsRecorded": {
+          "type": "integer"
+        }
+      }
+    },
+    "api.ErrorData": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "api.HomeData": {
+      "type": "object",
+      "properties": {
+        "inflation": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "labour24hrs": {
+          "type": "number"
+        },
+        "maxWage": {
+          "type": "number"
+        },
+        "minWage": {
+          "type": "number"
+        },
+        "trades": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.HomeDataTrade"
+          }
+        },
+        "vol24hrs": {
+          "type": "number"
+        },
+        "wage24hrs": {
+          "type": "number"
+        }
+      }
+    },
+    "api.HomeDataTrade": {
+      "type": "object",
+      "properties": {
+        "itemCode": {
+          "type": "string"
+        },
+        "paid": {
+          "type": "number"
+        },
+        "price": {
+          "type": "number"
+        },
+        "quantity": {
+          "type": "integer"
+        },
+        "time": {
+          "type": "integer"
+        }
+      }
+    },
+    "api.ItemData": {
+      "type": "object",
+      "properties": {
+        "averagePrice": {
+          "type": "number"
+        },
+        "candleData": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.ItemDataCandleStick"
+          }
+        },
+        "effectivePrices": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/api.ItemDataEffectivePrice"
+          }
+        },
+        "high": {
+          "type": "number"
+        },
+        "low": {
+          "type": "number"
+        },
+        "orderbook": {
+          "$ref": "#/definitions/api.ItemDataOrderBook"
+        },
+        "price": {
+          "type": "number"
+        },
+        "recentTransactions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.ItemDataTransaction"
+          }
+        },
+        "volume": {
+          "type": "number"
+        }
+      }
+    },
+    "api.ItemDataCandleStick": {
+      "type": "object",
+      "properties": {
+        "close": {
+          "type": "number"
+        },
+        "high": {
+          "type": "number"
+        },
+        "low": {
+          "type": "number"
+        },
+        "open": {
+          "type": "number"
+        },
+        "timestamp": {
+          "type": "integer"
+        },
+        "volume": {
+          "type": "number"
+        }
+      }
+    },
+    "api.ItemDataEffectivePrice": {
+      "type": "object",
+      "properties": {
+        "buy": {
+          "type": "number"
+        },
+        "sell": {
+          "type": "number"
+        }
+      }
+    },
+    "api.ItemDataOrderBook": {
+      "type": "object",
+      "properties": {
+        "buy": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.ItemDataOrderBookItem"
+          }
+        },
+        "sell": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.ItemDataOrderBookItem"
+          }
+        }
+      }
+    },
+    "api.ItemDataOrderBookItem": {
+      "type": "object",
+      "properties": {
+        "price": {
+          "type": "number"
+        },
+        "quantity": {
+          "type": "integer"
+        }
+      }
+    },
+    "api.ItemDataTransaction": {
+      "type": "object",
+      "properties": {
+        "amountPaid": {
+          "type": "number"
+        },
+        "buyerId": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "integer"
+        },
+        "sellerId": {
+          "type": "string"
+        },
+        "timeTillSale": {
+          "type": "integer"
+        },
+        "transactionTime": {
+          "type": "integer"
+        }
+      }
+    },
+    "api.ItemsItemData": {
+      "type": "object",
+      "properties": {
+        "avg": {
+          "type": "number"
+        },
+        "change": {
+          "type": "number"
+        },
+        "itemCode": {
+          "type": "string"
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "vol": {
+          "type": "number"
+        }
+      }
+    },
+    "api.UserData": {
+      "type": "object",
+      "properties": {
+        "avatarUrl": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "api.WageData": {
+      "type": "object",
+      "properties": {
+        "averagePrice": {
+          "type": "number"
+        },
+        "candleData": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float64"
+            }
+          }
+        },
+        "high": {
+          "type": "number"
+        },
+        "highest": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.WageDataTransaction"
+          }
+        },
+        "low": {
+          "type": "number"
+        },
+        "lowest": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/api.WageDataTransaction"
+          }
+        },
+        "volume": {
+          "type": "number"
+        }
+      }
+    },
+    "api.WageDataTransaction": {
+      "type": "object",
+      "properties": {
+        "employeeId": {
+          "type": "string"
+        },
+        "time": {
+          "type": "integer"
+        },
+        "wage": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}
